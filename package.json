@@ -1,0 +1,24 @@
+{
+	"name": "rooms",
+	"version": "1.0.0",
+	"description": "Nodejs simple rooms management wrapper for ws socket",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo 'Error: no test specified' && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/123game/rooms.git"
+	},
+	"keywords": [
+		"ws",
+		"websocket",
+		"rooms"
+	],
+	"author": "nguyen.123game <123game.123game.123game@gmail.com> (http://123gamestudio.com/)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/123game/rooms/issues"
+	},
+	"dependencies": {}
+}
