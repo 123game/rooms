@@ -1,31 +1,33 @@
+var uuid = require('node-uuid');
+
 var rooms = {};
 
 module.exports = {
 
-  find: function(name) {
-    return rooms[name];
+  find: function(id) {
+    return rooms[id];
   },
 
   join: function(socket) {
     join(null, socket);
   },
 
-  join: function(name, socket) {
-    if (!name) {
-      name = util.genRandomRoomname();
+  join: function(id, socket) {
+    if (!id) {
+      id = uuid.v1();
     }
 
-    var room = rooms[name];
+    var room = rooms[id];
 
     if (!room) {
       room = {};
-      room.name = name;
+      room.id = id;
       room.sockets = {};
-      rooms[name] = room;
+      rooms[id] = room;
     }
 
     room.sockets[socket.id] = socket;
-    socket.room = name;
+    socket.room = id;
 
     if (!room.host) {
       socket.is_host = true;

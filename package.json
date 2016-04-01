@@ -1,6 +1,6 @@
 {
 	"name": "rooms",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Nodejs simple rooms management wrapper for ws socket",
 	"main": "index.js",
 	"scripts": {
@@ -20,5 +20,7 @@
 	"bugs": {
 		"url": "https://github.com/123game/rooms/issues"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"node-uuid": "^1.4.7"
+	}
 }
