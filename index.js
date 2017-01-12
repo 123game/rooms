@@ -8,12 +8,8 @@ module.exports = {
         return rooms.get(id);
     },
 
-    join: function(socket) {
-        join(null, socket);
-    },
-
-    join: function(id, socket) {
-        if (!id) {
+    join: function(id = undefined, socket) {
+        if (id === undefined) {
             id = uuid.v1();
         }
 
@@ -35,6 +31,13 @@ module.exports = {
         }
     },
 
+    friends: function (roomId,socket){
+        const sockets = rooms.get(roomId).sockets;
+        const friends = new Map(sockets);
+        friends.delete(socket.id);
+        return friends;
+    },
+
     leave: function(socket) {
         if (socket.room) {
             var room = rooms.get(socket.room);
@@ -42,14 +45,14 @@ module.exports = {
             if (room) {
                 room.sockets.delete(socket.id);
 
-                if (!room.sockets || room.sockets.length == 0) {
+                if (!room.sockets || room.sockets.size == 0) {
 
                     rooms.delete(socket.room);
 
                 } else if (socket.is_host) {
 
                     var assigned = false;
-                    for (var s in room.sockets) {
+                    room.sockets.forEach((s,key) =>{
                         if (!assigned) {
                             s.is_host = true;
                             room.host = s.id;
@@ -57,7 +60,7 @@ module.exports = {
                         } else {
                             s.is_host = false;
                         }
-                    }
+                    })
                 }
             }
             socket.is_host = false;
