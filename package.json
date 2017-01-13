@@ -1,6 +1,6 @@
 {
 	"name": "rooms",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Nodejs simple rooms management wrapper for ws socket",
 	"main": "index.js",
 	"scripts": {

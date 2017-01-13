@@ -1,67 +1,70 @@
 var uuid = require('node-uuid');
 
-var rooms = {};
+var rooms = new Map();
 
 module.exports = {
 
-  find: function(id) {
-    return rooms[id];
-  },
+    find: function(id) {
+        return rooms.get(id);
+    },
 
-  join: function(socket) {
-    join(null, socket);
-  },
-
-  join: function(id, socket) {
-    if (!id) {
-      id = uuid.v1();
-    }
-
-    var room = rooms[id];
-
-    if (!room) {
-      room = {};
-      room.id = id;
-      room.sockets = {};
-      rooms[id] = room;
-    }
-
-    room.sockets[socket.id] = socket;
-    socket.room = id;
-
-    if (!room.host) {
-      socket.is_host = true;
-      room.host = socket.id;
-    }
-  },
-
-  leave: function(socket) {
-    if (socket.room) {
-      var room = rooms[socket.room];
-
-      if (room) {
-        delete room.sockets[socket.id];
-
-        if (!room.sockets || room.sockets.length == 0) {
-
-          delete rooms[socket.room];
-
-        } else if (socket.is_host) {
-
-          var assigned = false;
-          for (var s in room.sockets) {
-            if (!assigned) {
-              s.is_host = true;
-              room.host = s.id;
-              assigned = true;
-            } else {
-              s.is_host = false;
-            }
-          }
+    join: function(id = undefined, socket) {
+        if (id === undefined) {
+            id = uuid.v1();
         }
-      }
-      socket.is_host = false;
-      delete socket['room'];
+
+        var room = rooms.get(id);
+
+        if (!room) {
+            room = {};
+            room.id = id;
+            room.sockets = new Map;
+            rooms.set(id,room);
+        }
+
+        room.sockets.set(socket.id,socket);
+        socket.room = id;
+
+        if (!room.host) {
+            socket.is_host = true;
+            room.host = socket.id;
+        }
+    },
+
+    friends: function (roomId,socket){
+        const sockets = rooms.get(roomId).sockets;
+        const friends = new Map(sockets);
+        friends.delete(socket.id);
+        return friends;
+    },
+
+    leave: function(socket) {
+        if (socket.room) {
+            var room = rooms.get(socket.room);
+
+            if (room) {
+                room.sockets.delete(socket.id);
+
+                if (!room.sockets || room.sockets.size == 0) {
+
+                    rooms.delete(socket.room);
+
+                } else if (socket.is_host) {
+
+                    var assigned = false;
+                    room.sockets.forEach((s,key) =>{
+                        if (!assigned) {
+                            s.is_host = true;
+                            room.host = s.id;
+                            assigned = true;
+                        } else {
+                            s.is_host = false;
+                        }
+                    })
+                }
+            }
+            socket.is_host = false;
+            delete socket['room'];
+        }
     }
-  }
 };
